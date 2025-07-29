@@ -1,0 +1,8 @@
+openai-whisper
+tts
+ffmpeg-python
+requests
+fastapi
+uvicorn
+twilio
+python-dotenv 

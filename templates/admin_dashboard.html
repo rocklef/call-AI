@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Smart Appointment System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .admin-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .admin-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+        }
+        .nav-link {
+            color: #333;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+        .nav-link.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            font-weight: bold;
+        }
+        .btn-admin {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 12px 24px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            min-height: 80vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="sidebar p-4">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold text-primary">🏥 Admin Panel</h3>
+                        <p class="text-muted">Smart Appointment System</p>
+                    </div>
+                    
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="/admin">
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            Dashboard
+                        </a>
+                        <a class="nav-link" href="/admin/appointments">
+                            <i class="fas fa-calendar-check me-2"></i>
+                            Appointments
+                        </a>
+                        <a class="nav-link" href="/admin/calls">
+                            <i class="fas fa-phone me-2"></i>
+                            Call Logs
+                        </a>
+                        <a class="nav-link" href="/admin/prompts">
+                            <i class="fas fa-robot me-2"></i>
+                            AI Prompts
+                        </a>
+                        <a class="nav-link" href="/admin/reminders">
+                            <i class="fas fa-bell me-2"></i>
+                            Reminders
+                        </a>
+                        <hr>
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-2"></i>
+                            Public Site
+                        </a>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <div class="main-content p-4">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2 class="fw-bold mb-3">Welcome to Admin Dashboard</h2>
+                            <p class="text-muted">Manage appointments, view call logs, and configure AI behavior</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="total-appointments">-</h4>
+                                <p class="mb-0">Total Appointments</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="fas fa-phone fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="total-calls">-</h4>
+                                <p class="mb-0">AI Calls Today</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="fas fa-clock fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="pending-appointments">-</h4>
+                                <p class="mb-0">Pending</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="fas fa-robot fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="active-prompts">-</h4>
+                                <p class="mb-0">Active Prompts</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="fas fa-bell fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="upcoming-reminders">-</h4>
+                                <p class="mb-0">Upcoming Reminders</p>
+                                <button class="btn btn-success btn-sm mt-2" onclick="sendAllReminders()">
+                                    <i class="fas fa-phone"></i> Send All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="admin-card p-4">
+                                <h5 class="fw-bold mb-3">
+                                    <i class="fas fa-calendar-plus me-2"></i>
+                                    Quick Actions
+                                </h5>
+                                <div class="d-grid gap-2">
+                                    <a href="/admin/appointments" class="btn btn-admin">
+                                        <i class="fas fa-calendar-check me-2"></i>
+                                        Manage Appointments
+                                    </a>
+                                    <a href="/admin/calls" class="btn btn-admin">
+                                        <i class="fas fa-phone me-2"></i>
+                                        View Call Logs
+                                    </a>
+                                    <a href="/admin/prompts" class="btn btn-admin">
+                                        <i class="fas fa-robot me-2"></i>
+                                        Configure AI Prompts
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="admin-card p-4">
+                                <h5 class="fw-bold mb-3">
+                                    <i class="fas fa-chart-line me-2"></i>
+                                    Recent Activity
+                                </h5>
+                                <div id="recent-activity">
+                                    <div class="text-center text-muted">
+                                        <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                                        <p>Loading recent activity...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load dashboard stats
+        async function loadDashboardStats() {
+            try {
+                // Load appointments count
+                const appointmentsResponse = await fetch('/api/admin/appointments');
+                const appointmentsData = await appointmentsResponse.json();
+                document.getElementById('total-appointments').textContent = appointmentsData.appointments.length;
+                
+                // Count pending appointments
+                const pendingCount = appointmentsData.appointments.filter(apt => apt.status === 'scheduled').length;
+                document.getElementById('pending-appointments').textContent = pendingCount;
+                
+                // Load calls count
+                const callsResponse = await fetch('/api/admin/calls');
+                const callsData = await callsResponse.json();
+                const todayCalls = callsData.calls.filter(call => {
+                    const callDate = new Date(call.created_at).toDateString();
+                    const today = new Date().toDateString();
+                    return callDate === today;
+                });
+                document.getElementById('total-calls').textContent = todayCalls.length;
+                
+                // Load prompts count
+                const promptsResponse = await fetch('/api/admin/prompts');
+                const promptsData = await promptsResponse.json();
+                const activePrompts = promptsData.prompts.filter(prompt => prompt.is_active).length;
+                document.getElementById('active-prompts').textContent = activePrompts;
+                
+                // Load recent activity
+                loadRecentActivity();
+                
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+        
+        async function loadRecentActivity() {
+            try {
+                const appointmentsResponse = await fetch('/api/admin/appointments');
+                const appointmentsData = await appointmentsResponse.json();
+                
+                const recentActivity = document.getElementById('recent-activity');
+                const recentAppointments = appointmentsData.appointments.slice(0, 5);
+                
+                if (recentAppointments.length === 0) {
+                    recentActivity.innerHTML = '<p class="text-muted text-center">No recent appointments</p>';
+                    return;
+                }
+                
+                let activityHtml = '';
+                recentAppointments.forEach(appointment => {
+                    const date = new Date(appointment.created_at).toLocaleDateString();
+                    activityHtml += `
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>${appointment.name}</strong>
+                                <br>
+                                <small class="text-muted">${appointment.datetime}</small>
+                            </div>
+                            <span class="badge bg-${appointment.status === 'scheduled' ? 'primary' : 'success'}">${appointment.status}</span>
+                        </div>
+                    `;
+                });
+                
+                recentActivity.innerHTML = activityHtml;
+                
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+            }
+        }
+        
+        // Load upcoming reminders
+        async function loadUpcomingReminders() {
+            try {
+                const response = await fetch('/api/reminders/upcoming');
+                const data = await response.json();
+                document.getElementById('upcoming-reminders').textContent = data.appointments.length;
+            } catch (error) {
+                console.error('Error loading upcoming reminders:', error);
+                document.getElementById('upcoming-reminders').textContent = '0';
+            }
+        }
+        
+        // Send all reminders
+        async function sendAllReminders() {
+            try {
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                button.disabled = true;
+                
+                const response = await fetch('/api/reminders/send-all', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.total_appointments > 0) {
+                    alert(`Successfully sent ${result.total_appointments} reminder calls!`);
+                } else {
+                    alert('No upcoming appointments found for reminders.');
+                }
+                
+                // Refresh the reminders count
+                loadUpcomingReminders();
+                
+            } catch (error) {
+                console.error('Error sending reminders:', error);
+                alert('Error sending reminder calls. Please try again.');
+            } finally {
+                const button = event.target;
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+        
+        // Load stats when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardStats();
+            loadUpcomingReminders();
+        });
+    </script>
+</body>
+</html> 

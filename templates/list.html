@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Appointments</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f0f0f0; }
+        a, button { margin: 0 4px; }
+    </style>
+</head>
+<body>
+    <h1>Appointments</h1>
+    <a href="/appointments/new">Add Appointment</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Date/Time</th>
+                <th>Notes</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for appt in appointments %}
+            <tr>
+                <td>{{ appt[0] }}</td>
+                <td>{{ appt[1] }}</td>
+                <td>{{ appt[2] }}</td>
+                <td>{{ appt[3] }}</td>
+                <td>{{ appt[5] }}</td>
+                <td>
+                    <form method="post" action="/appointments/{{ appt[0] }}/delete" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Delete this appointment?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="6">No appointments found.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html> 

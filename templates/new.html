@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Appointment</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        form { max-width: 400px; margin: auto; }
+        label { display: block; margin-top: 1em; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 4px; }
+        button { margin-top: 1em; }
+    </style>
+</head>
+<body>
+    <h1>New Appointment</h1>
+    <form method="post" action="/appointments/new">
+        <label>Name:
+            <input type="text" name="name" required />
+        </label>
+        <label>Phone:
+            <input type="text" name="phone" required />
+        </label>
+        <label>Date and Time:
+            <input type="text" name="datetime" required placeholder="YYYY-MM-DD HH:MM" />
+        </label>
+        <label>Notes:
+            <textarea name="notes"></textarea>
+        </label>
+        <button type="submit">Create Appointment</button>
+        <a href="/">Cancel</a>
+    </form>
+</body>
+</html> 

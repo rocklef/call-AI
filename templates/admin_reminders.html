@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reminder Management - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .admin-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 2px 0;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .reminder-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border: none;
+        }
+        
+        .reminder-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn-reminder {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-reminder:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+        
+        .status-scheduled { background: #e3f2fd; color: #1976d2; }
+        .status-completed { background: #e8f5e8; color: #2e7d32; }
+        .status-cancelled { background: #ffebee; color: #c62828; }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .stats-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stats-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="sidebar p-4">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold">🏥 Admin Panel</h3>
+                        <p class="text-muted">Smart Appointment System</p>
+                    </div>
+                    
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="/admin">
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            Dashboard
+                        </a>
+                        <a class="nav-link" href="/admin/appointments">
+                            <i class="fas fa-calendar-check me-2"></i>
+                            Appointments
+                        </a>
+                        <a class="nav-link" href="/admin/calls">
+                            <i class="fas fa-phone me-2"></i>
+                            Call Logs
+                        </a>
+                        <a class="nav-link" href="/admin/prompts">
+                            <i class="fas fa-robot me-2"></i>
+                            AI Prompts
+                        </a>
+                        <a class="nav-link active" href="/admin/reminders">
+                            <i class="fas fa-bell me-2"></i>
+                            Reminders
+                        </a>
+                        <hr>
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-2"></i>
+                            Public Site
+                        </a>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <div class="main-content">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2 class="fw-bold mb-3">
+                                <i class="fas fa-bell me-2"></i>
+                                Reminder Management
+                            </h2>
+                            <p class="text-muted">Send automated reminder calls for upcoming appointments</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Row -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <div class="stats-number" id="total-upcoming">-</div>
+                                <div class="stats-label">Upcoming Appointments</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <div class="stats-number" id="reminders-sent">-</div>
+                                <div class="stats-label">Reminders Sent Today</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <div class="stats-number" id="success-rate">-</div>
+                                <div class="stats-label">Success Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="d-flex gap-3">
+                                <button class="btn btn-success btn-lg" onclick="sendAllReminders()">
+                                    <i class="fas fa-bell me-2"></i>
+                                    Send All Reminders
+                                </button>
+                                <button class="btn btn-outline-primary btn-lg" onclick="refreshReminders()">
+                                    <i class="fas fa-sync-alt me-2"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Appointments -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card reminder-card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-calendar me-2"></i>
+                                        Upcoming Appointments (Next 24 Hours)
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="upcoming-appointments">
+                                        <div class="text-center text-muted">
+                                            <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                                            <p>Loading upcoming appointments...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load upcoming appointments
+        async function loadUpcomingAppointments() {
+            try {
+                const response = await fetch('/api/reminders/upcoming');
+                const data = await response.json();
+                
+                const container = document.getElementById('upcoming-appointments');
+                document.getElementById('total-upcoming').textContent = data.appointments.length;
+                
+                if (data.appointments.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                            <h5>No Upcoming Appointments</h5>
+                            <p>No appointments scheduled for the next 24 hours.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                data.appointments.forEach(appointment => {
+                    const appointmentDate = new Date(appointment.datetime);
+                    const timeUntil = getTimeUntil(appointmentDate);
+                    
+                    html += `
+                        <div class="row align-items-center mb-3 p-3 border rounded">
+                            <div class="col-md-3">
+                                <strong>${appointment.name}</strong>
+                                <br>
+                                <small class="text-muted">${appointment.phone}</small>
+                            </div>
+                            <div class="col-md-3">
+                                <i class="fas fa-calendar me-1"></i>
+                                ${formatDateTime(appointment.datetime)}
+                                <br>
+                                <small class="text-muted">${timeUntil}</small>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="badge bg-primary">${appointment.service || 'General'}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="status-badge status-${appointment.status}">${appointment.status}</span>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button class="btn btn-reminder btn-sm" onclick="sendReminder(${appointment.id})">
+                                    <i class="fas fa-phone me-1"></i>
+                                    Send Reminder
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading upcoming appointments:', error);
+                document.getElementById('upcoming-appointments').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading appointments. Please try again.
+                    </div>
+                `;
+            }
+        }
+        
+        // Send reminder for specific appointment
+        async function sendReminder(appointmentId) {
+            try {
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                button.disabled = true;
+                
+                const response = await fetch(`/api/reminders/send/${appointmentId}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Reminder call sent successfully!');
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+                
+            } catch (error) {
+                console.error('Error sending reminder:', error);
+                alert('Error sending reminder call. Please try again.');
+            } finally {
+                const button = event.target;
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+        
+        // Send all reminders
+        async function sendAllReminders() {
+            try {
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                button.disabled = true;
+                
+                const response = await fetch('/api/reminders/send-all', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.total_appointments > 0) {
+                    alert(`Successfully sent ${result.total_appointments} reminder calls!`);
+                } else {
+                    alert('No upcoming appointments found for reminders.');
+                }
+                
+                // Refresh the list
+                loadUpcomingAppointments();
+                
+            } catch (error) {
+                console.error('Error sending reminders:', error);
+                alert('Error sending reminder calls. Please try again.');
+            } finally {
+                const button = event.target;
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+        
+        // Refresh reminders
+        function refreshReminders() {
+            loadUpcomingAppointments();
+        }
+        
+        // Helper functions
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            return date.toLocaleString();
+        }
+        
+        function getTimeUntil(appointmentDate) {
+            const now = new Date();
+            const diff = appointmentDate - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (hours > 0) {
+                return `in ${hours}h ${minutes}m`;
+            } else if (minutes > 0) {
+                return `in ${minutes}m`;
+            } else {
+                return 'now';
+            }
+        }
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadUpcomingAppointments);
+    </script>
+</body>
+</html> 
