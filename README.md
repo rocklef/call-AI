@@ -37,8 +37,8 @@ sy/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd sy
+   git clone https://github.com/rocklef/call-AI.git
+   cd call-AI
    ```
 
 2. **Set up Python environment**
